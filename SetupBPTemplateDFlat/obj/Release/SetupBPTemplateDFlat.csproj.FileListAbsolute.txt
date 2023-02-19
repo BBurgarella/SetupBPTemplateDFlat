@@ -1,0 +1,9 @@
+C:\Users\bburg\Documents\Code\SetupBPTemplate\SetupBPTemplateDFlat\bin\Release\SetupBPTemplateDFlat.exe.config
+C:\Users\bburg\Documents\Code\SetupBPTemplate\SetupBPTemplateDFlat\bin\Release\SetupBPTemplateDFlat.exe
+C:\Users\bburg\Documents\Code\SetupBPTemplate\SetupBPTemplateDFlat\bin\Release\SetupBPTemplateDFlat.pdb
+C:\Users\bburg\Documents\Code\SetupBPTemplate\SetupBPTemplateDFlat\obj\Release\SetupBPTemplateDFlat.Properties.Resources.resources
+C:\Users\bburg\Documents\Code\SetupBPTemplate\SetupBPTemplateDFlat\obj\Release\SetupBPTemplateDFlat.csproj.GenerateResource.cache
+C:\Users\bburg\Documents\Code\SetupBPTemplate\SetupBPTemplateDFlat\obj\Release\SetupBPTemplateDFlat.csproj.CoreCompileInputs.cache
+C:\Users\bburg\Documents\Code\SetupBPTemplate\SetupBPTemplateDFlat\obj\Release\SetupBPTemplateDFlat.exe
+C:\Users\bburg\Documents\Code\SetupBPTemplate\SetupBPTemplateDFlat\obj\Release\SetupBPTemplateDFlat.pdb
+C:\Users\bburg\Documents\Code\SetupBPTemplate\SetupBPTemplateDFlat\obj\Release\SetupBPTemplateDFlat.csproj.AssemblyReference.cache
