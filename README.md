@@ -6,6 +6,8 @@ A C# port of the Powershell Script to configure the [BPTemplate](https://github.
 I wrote this script because when I tried to use the PWSH script, it didn't work properly. I thought that having an application do the work instead would be better.
 Also, upon discussing with WittleWolfie, I learned that a bug I experienced was related to Unity process potentially still running so I included a function that kills every unity process running.
 
+Update: Turns out it was a locale problem that currupted the files when modified (at least from my understanding)
+
 ## Requirements
 
 - Windows 7 or later
