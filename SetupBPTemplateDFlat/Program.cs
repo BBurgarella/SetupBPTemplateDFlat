@@ -314,7 +314,7 @@ class Program
                 {
                     logs.AddLogs("Found 'basictemplate' in" + file);
                     content = content.Replace("basictemplate", modName.ToLower());
-                    File.WriteAllText(file, content, System.Text.Encoding.UTF8);
+                    File.WriteAllText(file, content, new UTF8Encoding(false));
                 }
                int progress = (int)(((float)count / (float)numFiles) * 100);
                logs.UpdateProgress(progress);
