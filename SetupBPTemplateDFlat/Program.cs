@@ -7,6 +7,68 @@ using System.Security.Principal;
 using System.Drawing;
 
 
+public class ModNameInputForm : Form
+{
+    private Label label;
+    private TextBox textBox;
+    private Button buttonOk;
+    private Button buttonCancel;
+    private string modName;
+
+    public ModNameInputForm()
+    {
+        // Set the title of the form
+        this.Text = "Enter Mod Name";
+
+        // Create a new Label control
+        label = new Label();
+        label.Left = 50;
+        label.Top = 20;
+        label.Text = "Please enter your mod name:";
+
+        // Create a new TextBox control
+        textBox = new TextBox();
+        textBox.Left = 50;
+        textBox.Top = 50;
+        textBox.Width = 200;
+
+        // Create a new OK Button control
+        buttonOk = new Button();
+        buttonOk.Text = "OK";
+        buttonOk.Left = 50;
+        buttonOk.Width = 70;
+        buttonOk.Top = 80;
+        buttonOk.Click += (sender, e) =>
+        {
+            modName = textBox.Text;
+            this.Close();
+        };
+
+        // Create a new Cancel Button control
+        buttonCancel = new Button();
+        buttonCancel.Text = "Cancel";
+        buttonCancel.Left = 130;
+        buttonCancel.Width = 70;
+        buttonCancel.Top = 80;
+        buttonCancel.Click += (sender, e) =>
+        {
+            this.Close();
+        };
+
+        // Add the controls to the form
+        this.Controls.Add(label);
+        this.Controls.Add(textBox);
+        this.Controls.Add(buttonOk);
+        this.Controls.Add(buttonCancel);
+    }
+
+    public string GetModName()
+    {
+        this.ShowDialog();
+        return modName;
+    }
+}
+
 public class LogWindow : Form
 {
     /**
@@ -81,6 +143,24 @@ class Program
         return folder;
     }
 
+    static void CopyDirectory(string sourceDir, string targetDir, LogWindow TgtLogs)
+    {
+        Directory.CreateDirectory(targetDir);
+
+        foreach (string file in Directory.GetFiles(sourceDir, "*", SearchOption.AllDirectories))
+        {
+            string destFile = Path.Combine(targetDir, Path.GetFileName(file));
+            File.Copy(file, destFile, true);
+            TgtLogs.AddLogs("Copied file:" + file + " into " + destFile);
+        }
+
+        foreach (string subDir in Directory.GetDirectories(sourceDir, "*", SearchOption.AllDirectories))
+        {
+            string destSubDir = Path.Combine(targetDir, Path.GetFileName(subDir));
+            CopyDirectory(subDir, destSubDir, TgtLogs);
+        }
+    }
+
     static int CountFiles(string directory)
     {
         // Get the number of files in the specified directory
@@ -128,7 +208,7 @@ class Program
         //Request administrator privileges if not already running as admin.
         if (!IsAdministrator())
         {
-            DialogResult result = MessageBox.Show("You are not running the program as Administrator, it might work but you might face bugs", "Continue or Stop", MessageBoxButtons.OKCancel);
+            DialogResult result = MessageBox.Show("You are not running the program as Administrator, it is adviced to run this program with Admin rights", "Continue or Stop", MessageBoxButtons.OKCancel);
 
             if (result == DialogResult.Yes)
             {
@@ -136,12 +216,13 @@ class Program
             }
             else if (result == DialogResult.No)
             {
-                return;
+                    Application.Exit();
+                    return;
             }    
         }
 
-            LogWindow logWindow = new LogWindow();
-            logWindow.Show();
+            LogWindow logs = new LogWindow();
+            logs.Show();
 
 
             // Warn the user
@@ -152,83 +233,39 @@ class Program
 
             // Prompt the user to select the Wrath install directory and set the "WrathPath" environment variable.
             string wrathPath = GetFolder("Select your Wrath install directory (contains Wrath.exe)", @"C:\Program Files (x86)\Steam\steamapps\common\Pathfinder Second Adventure");
-            logWindow.AddLogs("Wrath install directory chosen: " + wrathPath + "Setting the environement variable, please wait...");
+            logs.AddLogs("Wrath install directory chosen: " + wrathPath + "Setting the environement variable, please wait...");
             Environment.SetEnvironmentVariable("WrathPath", wrathPath, EnvironmentVariableTarget.User);
-            logWindow.AddLogs("Envrionement variable set");
+            logs.AddLogs("Envrionement variable set");
 
             // Get the current directory and create a new directory for the mod project.
             string currentDir = GetFolder("Select the BasicTemplate directory");
             string modProject = GetFolder("Select your mod project directory", currentDir);
-            logWindow.AddLogs("Mod directory chosen: " + currentDir);
+            logs.AddLogs("Mod directory chosen: " + currentDir);
             Directory.CreateDirectory(modProject);
 
             // Copy the files from the BasicTemplate directory to the mod project directory.
             string projectFiles = Path.Combine(currentDir, "BasicTemplate");
             string[] files = Directory.GetFiles(projectFiles, "*", SearchOption.AllDirectories);
 
-            for (int i = 0; i < files.Length; i++)
-            {
-                string file = files[i];
-                string destFile = Path.Combine(modProject, Path.GetFileName(file));
-                logWindow.AddLogs("Copying file: " + file + " to " + destFile);
-
-                // Calculate the progress percentage
-                int progress = (int)(((float)i / (float)files.Length) * 100);
-
-                // Update the progress bar
-                logWindow.UpdateProgress(progress);
-
-                File.Copy(file, destFile, true);
-
-                logWindow.AddLogs("");
-            }
+            CopyDirectory(projectFiles, modProject, logs);
 
             // Set the progress bar to 100% 
-            logWindow.UpdateProgress(100);
+            logs.UpdateProgress(100);
 
             // Prompt the user to select the Unity project directory and copy the Unity files to that directory.
             string unityProject = GetFolder("Select your Unity project directory", currentDir);
+            unityProject = Path.Combine(unityProject, "Assets");
             string unityFiles = Path.Combine(currentDir, "Assets");
 
-            files = Directory.GetFiles(unityFiles, "*", SearchOption.AllDirectories);
-
-            for (int i = 0; i < files.Length; i++)
-            {
-                string file = files[i];
-                string destFile = Path.Combine(unityProject, Path.GetFileName(file));
-                logWindow.AddLogs("Copying file: " + file + " to " + destFile);
-
-                // Calculate the progress percentage
-                int progress = (int)(((float)i / (float)files.Length) * 100);
-
-                // Update the progress bar
-                logWindow.UpdateProgress(progress);
-
-                File.Copy(file, destFile, true);
-
-                logWindow.AddLogs("");
-            }
+            logs.UpdateProgress(100);
+            CopyDirectory(unityFiles, unityProject, logs);
 
             // Set the progress bar to 100% when the task is complete
-            logWindow.UpdateProgress(100);
+            logs.UpdateProgress(100);
 
             // Ask the user for the name of the mod and replace the "BasicTemplate" string with the mod name in the project files.
-            string modName = "";
-            using (var form = new Form())
-            {
-                form.Text = "Enter Mod Name";
-                var label = new Label() { Left = 50, Top = 20, Text = "Please enter your mod name:" };
-                var textBox = new TextBox() { Left = 50, Top = 50, Width = 200 };
-                var buttonOk = new Button() { Text = "OK", Left = 50, Width = 70, Top = 80 };
-                var buttonCancel = new Button() { Text = "Cancel", Left = 130, Width = 70, Top = 80 };
-                buttonOk.Click += (sender, e) => { modName = textBox.Text; form.Close(); };
-                buttonCancel.Click += (sender, e) => { form.Close(); };
-                form.Controls.Add(label);
-                form.Controls.Add(textBox);
-                form.Controls.Add(buttonOk);
-                form.Controls.Add(buttonCancel);
-                form.ShowDialog();
-            }
+            ModNameInputForm modNameInputForm = new ModNameInputForm();
+            string modName = modNameInputForm.GetModName();
 
             int numFiles = CountFiles(modProject);
             int count = 0;
@@ -239,28 +276,33 @@ class Program
 
                 if (file.Contains("BasicTemplate"))
                 {
-                    logWindow.AddLogs("Renaming file: " + file + " to " + destFile);
+                    logs.AddLogs("Renaming file: " + file + " to " + destFile);
                     File.Move(file, destFile);
-                    logWindow.AddLogs("");
+                    logs.AddLogs("");
+                }
+                // These files should not be modified and caused a bug if opened
+                else if (file.Contains("ArtifactDB") || file.Contains("SourceAssetDB"))
+                {
+                    continue;
                 }
                 else
                 {
                     string content = File.ReadAllText(file);
-                    logWindow.AddLogs("Looking for and replacing 'BasicTemplate' in the file : " + count + "/" + numFiles);
+                    logs.AddLogs("Looking for and replacing 'BasicTemplate' in the file : " + count + "/" + numFiles);
                     content = content.Replace("BasicTemplate", modName);
                     File.WriteAllText(file, content);
-                    logWindow.AddLogs("");
+                    logs.AddLogs("");
                 }
 
                 // Update the progress bar
                 int progress = (int)(((float)count / (float)numFiles) * 100);
-                logWindow.UpdateProgress(progress);
+                logs.UpdateProgress(progress);
 
                 count++;
             }
 
             // Set the progress bar to 100% 
-            logWindow.UpdateProgress(100);
+            logs.UpdateProgress(100);
 
             // Replace the "BasicTemplate" string with the mod name in the Unity files.
             numFiles = CountFiles(unityProject);
@@ -271,11 +313,11 @@ class Program
                 content = content.Replace("BasicTemplate", modName);
                 File.WriteAllText(file, content);
                 int progress = (int)(((float)count / (float)numFiles) * 100);
-                logWindow.UpdateProgress(progress);
+                logs.UpdateProgress(progress);
                 if (count % 100 == 0)
                 {
-                    logWindow.AddLogs("Looking for and replacing 'BasicTemplate' in the file : " + count + "/" + numFiles);
-                    logWindow.AddLogs("");
+                    logs.AddLogs("Looking for and replacing 'BasicTemplate' in the file : " + count + "/" + numFiles);
+                    logs.AddLogs("");
                 }
                 count++;
             }
