@@ -16,7 +16,7 @@ Update: Turns out it was a locale problem that currupted the files when modified
 ## Usage
 
 1. Open the `SetupBPTemplate.exe` application. As an administrator, it requires these rights because it will make sure that every Unity process is closed to avoid locked files problems
-3. Select your Wrath of the Righteous install directory by clicking the "Select" button next to "Wrath of the Righteous Install Directory". The default directory is `C:\Program Files (x86)\Steam\steamapps\common\Pathfinder Second Adventure`.
+3. Select your Wrath of the Righteous install directory. The default directory is `C:\Program Files (x86)\Steam\steamapps\common\Pathfinder Second Adventure`.
 4. Select your BasicTemplate directory 
 5. Select your mod project directory.
 5. Select your mod Unity project directory.
