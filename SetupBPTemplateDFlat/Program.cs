@@ -5,6 +5,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Security.Principal;
 using System.Drawing;
+using System.Text;
 
 
 public class ModNameInputForm : Form
@@ -147,14 +148,14 @@ class Program
     {
         Directory.CreateDirectory(targetDir);
 
-        foreach (string file in Directory.GetFiles(sourceDir, "*", SearchOption.AllDirectories))
+        foreach (string file in Directory.GetFiles(sourceDir))
         {
             string destFile = Path.Combine(targetDir, Path.GetFileName(file));
             File.Copy(file, destFile, true);
             TgtLogs.AddLogs("Copied file:" + file + " into " + destFile);
         }
 
-        foreach (string subDir in Directory.GetDirectories(sourceDir, "*", SearchOption.AllDirectories))
+        foreach (string subDir in Directory.GetDirectories(sourceDir))
         {
             string destSubDir = Path.Combine(targetDir, Path.GetFileName(subDir));
             CopyDirectory(subDir, destSubDir, TgtLogs);
@@ -254,11 +255,11 @@ class Program
 
             // Prompt the user to select the Unity project directory and copy the Unity files to that directory.
             string unityProject = GetFolder("Select your Unity project directory", currentDir);
-            unityProject = Path.Combine(unityProject, "Assets");
+            string unityProject_assets = Path.Combine(unityProject, "Assets");
             string unityFiles = Path.Combine(currentDir, "Assets");
 
             logs.UpdateProgress(100);
-            CopyDirectory(unityFiles, unityProject, logs);
+            CopyDirectory(unityFiles, unityProject_assets, logs);
 
             // Set the progress bar to 100% when the task is complete
             logs.UpdateProgress(100);
@@ -280,11 +281,6 @@ class Program
                     File.Move(file, destFile);
                     logs.AddLogs("");
                 }
-                // These files should not be modified and caused a bug if opened
-                else if (file.Contains("ArtifactDB") || file.Contains("SourceAssetDB"))
-                {
-                    continue;
-                }
                 else
                 {
                     string content = File.ReadAllText(file);
@@ -304,24 +300,32 @@ class Program
             // Set the progress bar to 100% 
             logs.UpdateProgress(100);
 
-            // Replace the "BasicTemplate" string with the mod name in the Unity files.
-            numFiles = CountFiles(unityProject);
-            count = 0;
-            foreach (string file in Directory.GetFiles(unityProject, "*", SearchOption.AllDirectories))
-            {
-                string content = File.ReadAllText(file);
-                content = content.Replace("BasicTemplate", modName);
-                File.WriteAllText(file, content);
-                int progress = (int)(((float)count / (float)numFiles) * 100);
-                logs.UpdateProgress(progress);
-                if (count % 100 == 0)
+           //Replace the "BasicTemplate" string with the mod name in the Unity files.
+           numFiles = CountFiles(unityProject);
+           count = 0;
+           foreach (string file in Directory.GetFiles(unityProject, "*", SearchOption.AllDirectories))
+           {
+               //if (file.Contains("Library"))
+               //{
+               //    continue;
+               //}
+               string content = File.ReadAllText(file, System.Text.Encoding.UTF8);
+               if (content.Contains("basictemplate"))
                 {
-                    logs.AddLogs("Looking for and replacing 'BasicTemplate' in the file : " + count + "/" + numFiles);
-                    logs.AddLogs("");
+                    logs.AddLogs("Found 'basictemplate' in" + file);
+                    content = content.Replace("basictemplate", modName.ToLower());
+                    File.WriteAllText(file, content, System.Text.Encoding.UTF8);
                 }
-                count++;
-            }
-
+               int progress = (int)(((float)count / (float)numFiles) * 100);
+               logs.UpdateProgress(progress);
+               if (count % 100 == 0)
+               {
+                   logs.AddLogs("Looking for and replacing 'BasicTemplate' in the file : " + count + "/" + numFiles);
+                   logs.AddLogs("");
+               }
+               count++;
+           }
+            
             // Show a message box to indicate that the operation is complete.
             MessageBox.Show("Done", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }

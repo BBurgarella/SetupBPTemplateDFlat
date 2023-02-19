@@ -1,9 +1,0 @@
-C:\Users\bburg\Documents\Code\SetupBPTemplate\SetupBPTemplateDFlat\bin\Debug\SetupBPTemplateDFlat.exe.config
-C:\Users\bburg\Documents\Code\SetupBPTemplate\SetupBPTemplateDFlat\bin\Debug\SetupBPTemplateDFlat.exe
-C:\Users\bburg\Documents\Code\SetupBPTemplate\SetupBPTemplateDFlat\bin\Debug\SetupBPTemplateDFlat.pdb
-C:\Users\bburg\Documents\Code\SetupBPTemplate\SetupBPTemplateDFlat\obj\Debug\SetupBPTemplateDFlat.csproj.AssemblyReference.cache
-C:\Users\bburg\Documents\Code\SetupBPTemplate\SetupBPTemplateDFlat\obj\Debug\SetupBPTemplateDFlat.Properties.Resources.resources
-C:\Users\bburg\Documents\Code\SetupBPTemplate\SetupBPTemplateDFlat\obj\Debug\SetupBPTemplateDFlat.csproj.GenerateResource.cache
-C:\Users\bburg\Documents\Code\SetupBPTemplate\SetupBPTemplateDFlat\obj\Debug\SetupBPTemplateDFlat.csproj.CoreCompileInputs.cache
-C:\Users\bburg\Documents\Code\SetupBPTemplate\SetupBPTemplateDFlat\obj\Debug\SetupBPTemplateDFlat.exe
-C:\Users\bburg\Documents\Code\SetupBPTemplate\SetupBPTemplateDFlat\obj\Debug\SetupBPTemplateDFlat.pdb
